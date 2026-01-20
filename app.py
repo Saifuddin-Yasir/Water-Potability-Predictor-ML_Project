@@ -15,16 +15,16 @@ def predwater(ph, Hardness, Solids, Chloramines, Sulfate, Conductivity, Organic_
    prediction = model.predict(input_data)[0]
    return "Potable" if prediction == 1 else "Not Potable"
    
-input=[
-    gr.Slider(0,14,step=0.1,label="ph"),
-    gr.Number(label="Hardness"),
-    gr.Number(label="Solids"),
-    gr.Number(label="Chloramines"),
-    gr.Number(label="Sulfate"),
-    gr.Number(label="Conductivity"),
-    gr.Number(label="Organic_carbon"),
-    gr.Number(label="Trihalomethanes"),
-    gr.Number(label="Turbidity")
+input = [
+    gr.Slider(0, 14 , label="pH Level"),
+    gr.Number(label= "Hardness (mg/L)"),
+    gr.Number(label= "Solids (ppm)"),
+    gr.Number(label= "Chloramines (ppm)"),
+    gr.Number(label= "Sulfate (mg/L)"),
+    gr.Number(label= "Conductivity (μS/cm)"),
+    gr.Number(label= "Organic Carbon (ppm)"),
+    gr.Number(label= "Trihalomethanes (μg/L)"),
+    gr.Number(label= "Turbidity (NTU)")
 ]
 
 
@@ -33,7 +33,8 @@ app= gr.Interface(
     fn=predwater,
     inputs=input,
     outputs=gr.Textbox(label="Water Potability"),
-    title="Water Potability Predictor"
+    title="Water Potability Predictor",
+    description="Predict whether water is potable or not based on its chemical properties."
 )
 
 app.launch(share=True)

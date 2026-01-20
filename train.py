@@ -3,8 +3,8 @@ import pandas as pd
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import RobustScaler
 from sklearn.pipeline import Pipeline
-from sklearn.model_selection import train_test_split, GridSearchCV
-from xgboost import XGBClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
 import pickle
 
@@ -33,24 +33,37 @@ for i in data_un.columns:
 data=datas
 
 x_train,x_test,y_train,y_test = train_test_split(x,y,test_size=0.25,stratify=y,random_state=42)
-pipeline= Pipeline([('scaler',RobustScaler())])
-x_train= pipeline.fit_transform(x_train)
-x_test= pipeline.transform(x_test)
-best_model = XGBClassifier(learning_rate= 0.1,max_depth=5,n_estimators= 200)
-best_model.fit(x_train, y_train)
-y_pred = best_model.predict(x_test)
 
-accuracy_score=accuracy_score(y_test, y_pred)
-f1_score=f1_score(y_test, y_pred)
-precision_score=precision_score(y_test, y_pred)
-recall_score=recall_score(y_test, y_pred)
+best_model = SVC(
+        kernel='rbf',
+        C=10,
+        gamma=0.1,
+        class_weight='balanced',
+        random_state=42
+    )
 
-print(f'Accuracy: {accuracy_score}')
-print(f'F1 Score: {f1_score}')
-print(f'Precision Score: {precision_score}')
-print(f'Recall Score: {recall_score}')
+
+pipeline= Pipeline([
+   ('Model', best_model)                
+                    ])
+
+scaler= RobustScaler()
+x_train= scaler.fit_transform(x_train)
+x_test= scaler.transform(x_test)
+pipeline.fit(x_train, y_train)
+y_pred = pipeline.predict(x_test)
+
+accuracyscore=accuracy_score(y_test, y_pred)
+f1score=f1_score(y_test, y_pred)
+precisionscore=precision_score(y_test, y_pred)
+recallscore=recall_score(y_test, y_pred)
+
+print(f'Accuracy: {accuracyscore}')
+print(f'F1 Score: {f1score}')
+print(f'Precision Score: {precisionscore}')
+print(f'Recall Score: {recallscore}')
 
 with open('Water _Potability_Model.pkl', 'wb') as f:
-    pickle.dump(best_model, f)
+    pickle.dump(pipeline, f)
 
     
